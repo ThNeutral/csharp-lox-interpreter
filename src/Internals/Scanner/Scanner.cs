@@ -108,25 +108,19 @@ namespace Internals.Scanner {
                     line += 1;
                     break;
                 }
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9': {
-                    ParseNumber();
-                    break;
-                }
                 case ' ':
                 case '\r':
                 case '\t':
                     break;
                 default: {
-                    Error(line, ErrorTypes.UNEXPECTED_CHARACTER, token.ToString());
+                    if (IsDigit(token)) {
+                        ParseNumber();
+                    } else if (IsAlpha(token)) {
+                        ParseIndetifier();
+                    } else {
+                        Error(line, ErrorTypes.UNEXPECTED_CHARACTER, token.ToString());
+
+                    }
                     break;
                 }
             }
@@ -164,13 +158,28 @@ namespace Internals.Scanner {
         }
         private void ParseNumber() {
             while (true) {
-                bool isNumberChar = char.IsAsciiDigit(Peek()) || Peek() == '.';
+                bool isNumberChar = IsDigit(Peek()) || Peek() == '.';
                 bool isTrailingPoint = Peek() == '.' && IsAtEnd(1);
                 if (!isNumberChar || isTrailingPoint) {
                     AddToken(TokenType.NUMBER, double.Parse(source[start..current]));
                     break;
                 }
                 
+                current += 1;
+            }
+        }
+        private void ParseIndetifier() {
+            while(true) {
+                if (!IsAlphaNumeric(Peek())) {
+                    string literal = source[start..current];
+                    TokenType type = TokenType.IDENTIFIER;
+                    if (keywords.TryGetValue(literal, out TokenType value)) {
+                        type = value;
+                    }
+                    AddToken(type);
+                    break;
+                }
+
                 current += 1;
             }
         }
@@ -195,5 +204,34 @@ namespace Internals.Scanner {
             current += 1;
             return true;
         }
+        private bool IsDigit(char c) {
+            return c >= '0' && c <= '9';
+        }
+        private bool IsAlpha(char c) {
+            return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+        }
+
+        private bool IsAlphaNumeric(char c) {
+            return IsAlpha(c) || IsDigit(c);
+        }
+
+        private static readonly Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType> {
+            { "and", TokenType.AND },
+            { "class", TokenType.CLASS },
+            { "else", TokenType.ELSE },
+            { "false", TokenType.FALSE },
+            { "for", TokenType.FOR },
+            { "fun", TokenType.FUN },
+            { "if", TokenType.IF },
+            { "nil", TokenType.NIL },
+            { "or", TokenType.OR },
+            { "print", TokenType.PRINT },
+            { "return", TokenType.RETURN },
+            { "super", TokenType.SUPER },
+            { "this", TokenType.THIS },
+            { "true", TokenType.TRUE },
+            { "var", TokenType.VAR },
+            { "while", TokenType.WHILE }
+        };
     }
 }
