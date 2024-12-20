@@ -100,6 +100,10 @@ namespace Internals.Scanner {
                     }
                     break;
                 }
+                case ' ':
+                case '\r':
+                case '\t':
+                    break;
                 case '\n': {
                     line += 1;
                     break;
