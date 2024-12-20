@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Internals.Scanner;
 
 if (args.Length < 2)
 {
@@ -23,7 +24,10 @@ Console.Error.WriteLine("Logs from your program will appear here!");
 
 if (!string.IsNullOrEmpty(fileContents))
 {
-    throw new NotImplementedException("Scanner not implemented");
+    var tokens = new Scanner(fileContents).ScanTokens();
+    foreach (var token in tokens) {
+        Console.WriteLine(token);
+    }
 }
 else
 {
