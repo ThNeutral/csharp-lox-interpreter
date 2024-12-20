@@ -38,6 +38,14 @@ namespace Internals.Scanner {
                     AddToken(TokenType.RIGHT_PAREN);
                     break;
                 }
+                case '{': {
+                    AddToken(TokenType.LEFT_BRACE);
+                    break;
+                }
+                case '}': {
+                    AddToken(TokenType.RIGHT_BRACE);
+                    break;
+                }
                 default: {
                     throw new ArgumentException("Unknown token during parsing: " + token.ToString());
                 }
