@@ -21,6 +21,7 @@ namespace Internals.Scanner {
                 ParseNextToken(); 
             }
 
+            tokens.Add(new Token(TokenType.EOF, "", null, line));
             return tokens;
         }
 
