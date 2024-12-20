@@ -108,6 +108,19 @@ namespace Internals.Scanner {
                     line += 1;
                     break;
                 }
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9': {
+                    ParseNumber();
+                    break;
+                }
                 case ' ':
                 case '\r':
                 case '\t':
@@ -126,7 +139,7 @@ namespace Internals.Scanner {
             tokens.Add(new Token(type, lexeme, literal, line));
         }
         private void AddLongToken(char condition, TokenType ifTrue, TokenType ifFalse) {
-            if (!Match(condition)) {
+            if (Peek() != condition) {
                 AddToken(ifFalse);
                 return;
             }
@@ -142,8 +155,19 @@ namespace Internals.Scanner {
                 };
 
                 if (Match('"')) {
-                    current += 1;   
                     AddToken(TokenType.STRING, source[(start+1)..(current-1)]);
+                    break;
+                }
+                
+                current += 1;
+            }
+        }
+        private void ParseNumber() {
+            while (true) {
+                bool isNumberChar = char.IsAsciiDigit(Peek()) || Peek() == '.';
+                bool isTrailingPoint = Peek() == '.' && IsAtEnd(1);
+                if (!isNumberChar || isTrailingPoint) {
+                    AddToken(TokenType.NUMBER, double.Parse(source[start..current]));
                     break;
                 }
                 
@@ -152,6 +176,9 @@ namespace Internals.Scanner {
         }
         private bool IsAtEnd() {
             return current >= source.Length;
+        }
+        private bool IsAtEnd(int offset) {
+            return current + offset >= source.Length;
         }
         private void Error(int line, ErrorTypes type, string payload = "") {
             hasError = true;
@@ -163,7 +190,10 @@ namespace Internals.Scanner {
         }
         private bool Match(char ch) {
             if (IsAtEnd()) return false;
-            return source[current] == ch;
+            if (source[current] != ch) return false;
+
+            current += 1;
+            return true;
         }
     }
 }

@@ -13,8 +13,23 @@ namespace internals.token {
             this.line = line;
         }
         public override string ToString() {
-            var literal = this.literal == null ? "null" : this.literal; 
-            return this.type + " " + this.lexeme + " " + literal;
+            string literalString;
+
+            if (this.literal == null) 
+            {
+                literalString = "null";
+            } 
+            else if (this.literal is int || this.literal is long || this.literal is float || this.literal is double) 
+            {
+                double number = Convert.ToDouble(this.literal);
+                literalString = number % 1 == 0 ? $"{number:F1}" : $"{number}";
+            } 
+            else 
+            {
+                literalString = this.literal.ToString();
+            }
+
+            return $"{this.type} {this.lexeme} {literalString}";
         }
     }
 }
