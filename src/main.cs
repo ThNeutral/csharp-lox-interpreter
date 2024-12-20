@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using internals.cli;
 using Internals.Scanner;
 
 if (args.Length < 2)
@@ -24,9 +25,14 @@ Console.Error.WriteLine("Logs from your program will appear here!");
 
 if (!string.IsNullOrEmpty(fileContents))
 {
-    var tokens = new Scanner(fileContents).ScanTokens();
+    var scanner = new Scanner(fileContents);
+    var tokens = scanner.ScanTokens();
     foreach (var token in tokens) {
         Console.WriteLine(token);
+    }
+    
+    if (scanner.hasError) {
+        Environment.Exit(65);
     }
 }
 else
