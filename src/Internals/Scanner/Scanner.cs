@@ -74,6 +74,22 @@ namespace Internals.Scanner {
                     AddToken(TokenType.STAR);
                     break;
                 }
+                case '!': {
+                    AddLongToken('=', TokenType.BANG_EQUAL, TokenType.BANG);
+                    break;
+                }
+                case '=': {
+                    AddLongToken('=', TokenType.EQUAL_EQUAL, TokenType.EQUAL);
+                    break;
+                }
+                case '<': {
+                    AddLongToken('=', TokenType.LESS_EQUAL, TokenType.LESS);
+                    break;
+                }
+                case '>': {
+                    AddLongToken('=', TokenType.GREATER_EQUAL, TokenType.GREATER);
+                    break;
+                }
                 default: {
                     Error(line, ErrorTypes.UNEXPECTED_CHARACTER, token.ToString());
                     break;
@@ -84,8 +100,18 @@ namespace Internals.Scanner {
             AddToken(type, null);
         }
         private void AddToken(TokenType type, object? literal) {
-            string lexeme = source.Substring(start, current - start);
+            string lexeme = source[start..current];
             tokens.Add(new Token(type, lexeme, literal, line));
+        }
+        private void AddLongToken(char condition, TokenType ifTrue, TokenType ifFalse) {
+            if (IsAtEnd()) AddToken(ifFalse);
+
+            if (source[current] == condition) {
+                current += 1;
+                AddToken(ifTrue); 
+            } else {
+                AddToken(ifFalse);
+            }
         }
         private bool IsAtEnd() {
             return current >= source.Length;
