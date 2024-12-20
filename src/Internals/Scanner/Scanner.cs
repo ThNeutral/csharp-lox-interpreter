@@ -100,14 +100,18 @@ namespace Internals.Scanner {
                     }
                     break;
                 }
-                case ' ':
-                case '\r':
-                case '\t':
+                case '"': {
+                    ParseString();
                     break;
+                }
                 case '\n': {
                     line += 1;
                     break;
                 }
+                case ' ':
+                case '\r':
+                case '\t':
+                    break;
                 default: {
                     Error(line, ErrorTypes.UNEXPECTED_CHARACTER, token.ToString());
                     break;
@@ -130,10 +134,26 @@ namespace Internals.Scanner {
             current += 1;
             AddToken(ifTrue); 
         }
+        private void ParseString() {
+            while (true) {
+                if (IsAtEnd()) {
+                    Error(line, ErrorTypes.UNTERMINATED_STRING); 
+                    break;
+                };
+
+                if (Match('"')) {
+                    current += 1;   
+                    AddToken(TokenType.STRING, source[(start+1)..(current-1)]);
+                    break;
+                }
+                
+                current += 1;
+            }
+        }
         private bool IsAtEnd() {
             return current >= source.Length;
         }
-        private void Error(int line, ErrorTypes type, string? payload) {
+        private void Error(int line, ErrorTypes type, string payload = "") {
             hasError = true;
             CLI.Error(line, type, payload);
         }

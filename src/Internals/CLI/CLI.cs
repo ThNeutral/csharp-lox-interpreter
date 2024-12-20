@@ -7,6 +7,10 @@ namespace internals.cli {
                     message = "Unexpected character: " + payload;
                     break;
                 }
+                case ErrorTypes.UNTERMINATED_STRING: {
+                    message = "Unterminated string.";
+                    break;
+                }
             }
             Console.Error.WriteLine("[line " + line.ToString() + "] Error: " + message);
         }
