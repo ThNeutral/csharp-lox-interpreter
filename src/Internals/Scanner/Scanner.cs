@@ -104,14 +104,18 @@ namespace Internals.Scanner {
             tokens.Add(new Token(type, lexeme, literal, line));
         }
         private void AddLongToken(char condition, TokenType ifTrue, TokenType ifFalse) {
-            if (IsAtEnd()) AddToken(ifFalse);
-
-            if (source[current] == condition) {
-                current += 1;
-                AddToken(ifTrue); 
-            } else {
+            if (IsAtEnd()) {
                 AddToken(ifFalse);
+                return;
             }
+
+            if (source[current] != condition) {
+                AddToken(ifFalse);
+                return;
+            }
+
+            current += 1;
+            AddToken(ifTrue); 
         }
         private bool IsAtEnd() {
             return current >= source.Length;
