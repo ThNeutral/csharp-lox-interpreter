@@ -90,6 +90,20 @@ namespace Internals.Scanner {
                     AddLongToken('=', TokenType.GREATER_EQUAL, TokenType.GREATER);
                     break;
                 }
+                case '/': {
+                    if (Match('/')) {
+                        while (Peek() != '\n' && !IsAtEnd()) {
+                            current += 1;
+                        }
+                    } else {
+                        AddToken(TokenType.SLASH);
+                    }
+                    break;
+                }
+                case '\n': {
+                    line += 1;
+                    break;
+                }
                 default: {
                     Error(line, ErrorTypes.UNEXPECTED_CHARACTER, token.ToString());
                     break;
@@ -104,12 +118,7 @@ namespace Internals.Scanner {
             tokens.Add(new Token(type, lexeme, literal, line));
         }
         private void AddLongToken(char condition, TokenType ifTrue, TokenType ifFalse) {
-            if (IsAtEnd()) {
-                AddToken(ifFalse);
-                return;
-            }
-
-            if (source[current] != condition) {
+            if (!Match(condition)) {
                 AddToken(ifFalse);
                 return;
             }
@@ -123,6 +132,14 @@ namespace Internals.Scanner {
         private void Error(int line, ErrorTypes type, string? payload) {
             hasError = true;
             CLI.Error(line, type, payload);
+        }
+        private char Peek() {
+            if (IsAtEnd()) return '\0';
+            return source[current];
+        }
+        private bool Match(char ch) {
+            if (IsAtEnd()) return false;
+            return source[current] == ch;
         }
     }
 }
