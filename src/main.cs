@@ -1,41 +1,64 @@
 using System;
 using System.IO;
+using internals.exprgenerator;
 using internals.cli;
-using Internals.Scanner;
+using internals.scanner;
+using internals.token;
+using internals.expr;
+using internals.astprinter;
 
-if (args.Length < 2)
+if (args.Length < 1)
 {
-    Console.Error.WriteLine("Usage: ./your_program.sh tokenize <filename>");
+    Console.Error.WriteLine("Command was not provided. Possible commands: 'tokenize', 'generate_ast'");
     Environment.Exit(1);
 }
 
 string command = args[0];
-string filename = args[1];
 
-if (command != "tokenize")
+if (command != "tokenize" && command != "generate_ast")
 {
     Console.Error.WriteLine($"Unknown command: {command}");
     Environment.Exit(1);
 }
 
-string fileContents = File.ReadAllText(filename);
+switch (command) {
+    case "tokenize": {
+        if (args.Length < 2)
+        {
+            Console.Error.WriteLine("Usage: interpreter.sh tokenize <filename>");
+            Environment.Exit(1);
+        }
 
-// You can use print statements as follows for debugging, they'll be visible when running tests.
-Console.Error.WriteLine("Logs from your program will appear here!");
+        string filename = args[1];
+        string fileContents = File.ReadAllText(filename);
 
-if (!string.IsNullOrEmpty(fileContents))
-{
-    var scanner = new Scanner(fileContents);
-    var tokens = scanner.ScanTokens();
-    foreach (var token in tokens) {
-        Console.WriteLine(token);
+        Scanner scanner = new Scanner(fileContents);
+        List<Token> tokens = scanner.ScanTokens();
+
+        foreach (var token in tokens) {
+            Console.WriteLine(token);
+        }
+            
+        if (scanner.hasError) {
+            Environment.Exit(65);
+        }
+
+        break;
     }
-    
-    if (scanner.hasError) {
-        Environment.Exit(65);
+    case "generate_ast": {
+        if (args.Length < 2)
+        {
+            Console.Error.WriteLine("Usage: interpreter.sh generate_ast <output directory>");
+            Environment.Exit(1);
+        }
+
+        string outDir = args[1];
+        ExprGenerator.Generate(outDir, "Expr", [
+            "Binary   : Expr left, Token operatorToken, Expr right",
+            "Grouping : Expr expression",
+            "Literal  : object value",
+            "Unary    : Token operatorToken, Expr right"
+        ]);
+        break;
     }
-}
-else
-{
-    Console.WriteLine("EOF  null"); // Placeholder, remove this line when implementing the scanner
 }

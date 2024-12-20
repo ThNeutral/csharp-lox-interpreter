@@ -1,7 +1,7 @@
 using internals.cli;
 using internals.token;
 
-namespace Internals.Scanner {
+namespace internals.scanner {
     public class Scanner {
         private readonly string source;
         private int start;
