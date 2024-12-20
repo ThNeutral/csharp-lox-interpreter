@@ -1,3 +1,4 @@
+using internals.cli;
 using internals.token;
 
 namespace Internals.Scanner {
@@ -71,7 +72,8 @@ namespace Internals.Scanner {
                     break;
                 }
                 default: {
-                    throw new ArgumentException("Unknown token during parsing: " + token.ToString());
+                    CLI.Error(line, ErrorTypes.UNEXPECTED_CHARACTER, token.ToString());
+                    break;
                 }
             }
         }
