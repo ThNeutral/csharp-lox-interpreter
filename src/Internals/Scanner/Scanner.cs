@@ -46,6 +46,30 @@ namespace Internals.Scanner {
                     AddToken(TokenType.RIGHT_BRACE);
                     break;
                 }
+                case ',': {
+                    AddToken(TokenType.COMMA);
+                    break;
+                }
+                case '.': {
+                    AddToken(TokenType.DOT);
+                    break;
+                }
+                case '-': {
+                    AddToken(TokenType.MINUS);
+                    break;
+                }
+                case '+': {
+                    AddToken(TokenType.PLUS);
+                    break;
+                }
+                case ';': {
+                    AddToken(TokenType.SEMICOLON);
+                    break;
+                }
+                case '*': {
+                    AddToken(TokenType.STAR);
+                    break;
+                }
                 default: {
                     throw new ArgumentException("Unknown token during parsing: " + token.ToString());
                 }
