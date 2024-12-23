@@ -74,6 +74,14 @@ namespace internals.scanner {
                     AddToken(TokenType.STAR);
                     break;
                 }
+                case ':': {
+                    AddToken(TokenType.COLON);
+                    break;
+                }
+                case '?': {
+                    AddToken(TokenType.QUESTION_MARK);
+                    break;
+                }
                 case '!': {
                     AddLongToken('=', TokenType.BANG_EQUAL, TokenType.BANG);
                     break;
@@ -231,7 +239,9 @@ namespace internals.scanner {
             { "this", TokenType.THIS },
             { "true", TokenType.TRUE },
             { "var", TokenType.VAR },
-            { "while", TokenType.WHILE }
+            { "while", TokenType.WHILE },
+            { "break", TokenType.BREAK },
+            { "continue", TokenType.CONTINUE }
         };
     }
 }

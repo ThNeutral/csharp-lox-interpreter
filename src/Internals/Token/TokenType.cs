@@ -5,6 +5,7 @@ namespace internals.token {
         COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
 
         // One or two character tokens.
+        QUESTION_MARK, COLON,
         BANG, BANG_EQUAL,
         EQUAL, EQUAL_EQUAL,
         GREATER, GREATER_EQUAL,
@@ -15,7 +16,7 @@ namespace internals.token {
 
         // Keywords.
         AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
-        PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
+        PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, BREAK, CONTINUE,
 
         EOF
     }

@@ -7,6 +7,8 @@ using Nothing = object;
 
 namespace internals.interpreter {
     class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<Nothing> {
+        public class BreakSignal : SystemException {}
+        public class ContinueSignal : SystemException {}
         private environment.Environment environment = new();
         public bool isInREPL = false;
         public void Interpret(List<Stmt> statements) {
@@ -125,6 +127,54 @@ namespace internals.interpreter {
             environment.Assign(expr.name, value);
             return value;
         }
+        public object VisitLogicalExpr(Expr.Logical expr) {
+            object left = Evaluate(expr.left);
+
+            if (expr.operatorToken.type == TokenType.OR) {
+                if (IsTruthy(left)) return left;
+            } else {
+                if (!IsTruthy(left)) return left;
+            }
+
+            return Evaluate(expr.right);
+        }
+        public object VisitTernaryExpr(Expr.Ternary expr) {
+            object condition = Evaluate(expr.condition);
+
+            if (IsTruthy(condition)) {
+                return Evaluate(expr.thenBranch);
+            } else {
+                return Evaluate(expr.elseBranch);
+            }
+        }
+        public Nothing VisitBreakStmt(Stmt.Break stmt) {
+            throw new BreakSignal();
+        }
+        public Nothing VisitContinueStmt(Stmt.Continue stmt) {
+            throw new ContinueSignal();
+        }
+        public Nothing VisitWhileStmt(Stmt.While stmt) {
+            while (IsTruthy(Evaluate(stmt.condition))) {
+                try {
+                    Execute(stmt.body);
+                } catch (BreakSignal) {
+                    break;
+                } catch (ContinueSignal) {
+                    continue;
+                }
+            }
+
+            return null;
+        }
+        public Nothing VisitIfStmt(Stmt.If stmt) {
+            if (IsTruthy(Evaluate(stmt.condition))) {
+                Execute(stmt.thenBranch);
+            } else if (stmt.elseBranch != null) {
+                Execute(stmt.elseBranch);
+            }
+
+            return null;
+        }
         public Nothing VisitBlockStmt(Stmt.Block stmt) {
             ExecuteBlock(stmt.statements, new environment.Environment(environment));
             return null;
@@ -140,8 +190,8 @@ namespace internals.interpreter {
         } 
         public Nothing VisitVarStmt(Stmt.Var stmt) {
             object value = null;
-            if (stmt.intializer != null) {
-                value = Evaluate(stmt.intializer);
+            if (stmt.initializer != null) {
+                value = Evaluate(stmt.initializer);
             }
 
             environment.Define(stmt.name.lexeme, value);

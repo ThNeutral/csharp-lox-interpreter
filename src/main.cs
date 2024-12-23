@@ -1,13 +1,7 @@
-using internals.exprgenerator;
 using internals.lox;
 
 if (args.Length == 0) {
     Lox.HandleREPL();
-    Environment.Exit(0);
-}
-
-if (args[0] == "generate_ast") {
-    ExprGenerator.GenerateFromConsoleLineArgs();
     Environment.Exit(0);
 }
 
