@@ -1,4 +1,5 @@
 using internals.cli;
+using internals.lox;
 using internals.token;
 
 namespace internals.scanner {
@@ -118,7 +119,7 @@ namespace internals.scanner {
                     } else if (IsAlpha(token)) {
                         ParseIndetifier();
                     } else {
-                        Error(line, ErrorTypes.UNEXPECTED_CHARACTER, token.ToString());
+                        Error(line, "Unexpected character: " + token.ToString());
 
                     }
                     break;
@@ -144,7 +145,7 @@ namespace internals.scanner {
         private void ParseString() {
             while (true) {
                 if (IsAtEnd()) {
-                    Error(line, ErrorTypes.UNTERMINATED_STRING); 
+                    Error(line, "Unterminated string."); 
                     break;
                 };
 
@@ -189,9 +190,9 @@ namespace internals.scanner {
         private bool IsAtEnd(int offset) {
             return current + offset >= source.Length;
         }
-        private void Error(int line, ErrorTypes type, string payload = "") {
+        private void Error(int line, string message) {
             hasError = true;
-            CLI.Error(line, type, payload);
+            Lox.Error(line, message);
         }
         private char Peek() {
             if (IsAtEnd()) return '\0';
