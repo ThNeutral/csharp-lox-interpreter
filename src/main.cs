@@ -9,14 +9,19 @@ string filename = args[0];
 var fileContents = File.ReadAllText(filename);
 
 var tokens = Lox.ScanTokens(fileContents);
-var expression = Lox.ParseTokens(tokens);
+var statements = Lox.ParseTokens(tokens);
 
-if (Lox.hadSyntaxError) {
+if (Lox.hadError) {
     Environment.Exit(65);
 }
 
-Lox.Interpret(expression);
+Lox.Resolve(statements);
+if (Lox.hadError) {
+    Environment.Exit(70);
+}
 
-if (Lox.hadRuntimeError) {
+Lox.Interpret(statements);
+
+if (Lox.hadError) {
     Environment.Exit(70);
 }

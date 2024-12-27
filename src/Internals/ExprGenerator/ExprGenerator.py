@@ -10,19 +10,22 @@ def main():
     generate(out_dir, "Expr", [
         "Assign   : Token name, Expr value",
         "Binary   : Expr left, Token operatorToken, Expr right",
+        "Call     : Expr callee, Token paren, List<Expr> arguments",
         "Grouping : Expr expression",
         "Literal  : object value",
         "Logical  : Expr left, Token operatorToken, Expr right",
         "Unary    : Token operatorToken, Expr right",
         "Variable : Token name",
-        "Ternary  : Expr condition, Expr thenBranch, Expr elseBranch"
+        "Lambda   : List<Token> arguments, List<Stmt> body"
     ])
 
     generate(out_dir, "Stmt", [
         "Block      : List<Stmt> statements",
         "Expression : Expr expression",
+        "Function   : Token name, List<Token> arguments, List<Stmt> body",
         "If         : Expr condition, Stmt thenBranch, Stmt elseBranch",
         "Print      : Expr expression",
+        "Return     : Token keyword, Expr value",
         "Break      : Token breakToken",
         "Continue   : Token continueToken",
         "Var        : Token name, Expr initializer",

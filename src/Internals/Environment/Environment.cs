@@ -1,4 +1,4 @@
-using internals.errors;
+using internals.helpers;
 using internals.token;
 
 namespace internals.environment {
@@ -24,6 +24,18 @@ namespace internals.environment {
 
             throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
         }
+        public object GetAt(int distance, string name) {
+            return Ancestor(distance).values[name];
+        }
+        public Environment Ancestor(int distance) {
+            Environment environment = this;
+
+            for (int i = 0; i < distance; i++) {
+                environment = environment.enclosing;
+            }
+
+            return environment;
+        }
         public void Assign(Token name, object value) {
             if (values.ContainsKey(name.lexeme)) {
                 values[name.lexeme] = value;
@@ -36,6 +48,9 @@ namespace internals.environment {
             }
 
             throw new RuntimeError(name, "Assignment to undefined variable '" + name.lexeme + "'.");
+        }
+        internal void AssignAt(int distance, Token name, object value) {
+            Ancestor(distance).values[name.lexeme] = value;
         }
     } 
 }
